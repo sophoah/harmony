@@ -121,13 +121,22 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: harmony
+          name: harmony-${{ matrix.runs-on }}
           path: harmony/bin/*
           retention-days: 1
 
+  merge_artifacts:
+    runs-on: ubuntu-22.04
+    needs: build
+    steps:
+      - name: Merge Artifacts
+        uses: actions/upload-artifact/merge@v4
+        with:
+          name: harmony
+
   docker-build:
     name: Build and push harmony docker image
-    needs: [check, build]
+    needs: [check, build, merge_artifacts]
     runs-on: ubuntu-22.04
     if: needs.check.outputs.tag_annotated == 'true'
 
@@ -180,7 +189,7 @@ jobs:
 
   release-page:
     name: Sign binary and create and publish release page
-    needs: [check, build]
+    needs: [check, build, merge_artifacts]
     runs-on: ubuntu-22.04
     if: needs.check.outputs.tag_annotated == 'true'
 

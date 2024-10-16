@@ -27,9 +27,9 @@ jobs:
           VERSION=$(git tag -l --sort=-v:refname | head -n 1)
           if git rev-parse $VERSION^{tag} -- &>/dev/null
           then
-            echo "::set-output name=tag_annotated::true"
+            echo "tag_annotated=true" >> $GITHUB_OUTPUT
           else
-            echo "::set-output name=tag_annotated::false"
+            echo "tag_annotated=false" >> $GITHUB_OUTPUT
           fi
         working-directory: harmony
 
